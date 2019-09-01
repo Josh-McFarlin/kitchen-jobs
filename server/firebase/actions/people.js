@@ -8,13 +8,23 @@ const createPerson = (user) =>
         .set({
             name: user.displayName,
             email: user.email,
+            photo: user.photoURL,
             jobsCompleted: 0,
+            jobsSkipped: 0,
+            jobsStolen: 0,
             isAdmin: false
         });
+
+const deletePerson = (email) =>
+    firebase.firestore()
+        .collection('people')
+        .doc(email)
+        .delete();
 
 const fetchPeople = () =>
     firebase.firestore()
         .collection('people')
+        .orderBy('name')
         .get()
         .then(async (querySnapshot) => {
             const people = [];
@@ -29,6 +39,7 @@ const fetchPeople = () =>
 const fetchEmails = () =>
     firebase.firestore()
         .collection('people')
+        .orderBy('name')
         .get()
         .then(async (querySnapshot) => {
             const emailsToNames = {};
@@ -51,6 +62,7 @@ const fetchPerson = (email) =>
 
 module.exports = {
     createPerson,
+    deletePerson,
     fetchPeople,
     fetchEmails,
     fetchPerson

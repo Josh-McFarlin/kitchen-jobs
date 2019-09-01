@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import withStyles from 'react-jss';
 import { Button, Modal, ModalBody, ModalHeader, ModalFooter } from 'shards-react';
 import _ from 'lodash';
-import VirtualizedSelect from 'react-virtualized-select';
 
 
 const styles = (theme) => ({
@@ -46,6 +45,7 @@ class JobSwitcher extends React.Component {
         const { closeModal } = this.props;
 
         closeModal();
+        window.location.reload();
     };
 
     render() {
@@ -61,7 +61,7 @@ class JobSwitcher extends React.Component {
                     className={classes.header}
                     titleClass={classes.title}
                 >
-                    Job Switcher
+                    Switch Job
                 </ModalHeader>
                 <ModalBody>
                     <div className={classes.qrHolder}>

@@ -16,6 +16,19 @@ export const createPerson = (user) =>
         })
     });
 
+export const deletePerson = (email) =>
+    fetch(urls.base + urls.api.deletePerson, {
+        method: 'post',
+        mode: 'same-origin',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            email
+        })
+    });
+
 export const fetchPeople = () =>
     fetch(urls.base + urls.api.fetchPeople, {
         method: 'post',

@@ -43,10 +43,7 @@ export const signOut = () =>
     fetch(urls.auth.sessionLogout, {
         method: 'post',
         mode: 'same-origin',
-        credentials: 'include',
-        headers: {
-            'Content-Type': 'application/json'
-        }
+        credentials: 'include'
     });
 
 export const getCurrentUser = (session) =>

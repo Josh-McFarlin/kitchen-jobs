@@ -15,7 +15,6 @@ import 'bootstrap-css-only';
 import 'shards-ui/dist/css/shards.min.css';
 import 'react-select/dist/react-select.css';
 import 'react-virtualized/styles.css';
-import 'react-virtualized-select/styles.css';
 
 
 const styles = (theme) => ({
@@ -68,7 +67,7 @@ export default class MyApp extends App {
         let pageProps = {};
 
         if (Component.getInitialProps) {
-            pageProps = await Component.getInitialProps(ctx);
+            pageProps = await Component.getInitialProps(ctx, currentUser);
         }
 
         const md = ctx.req ? new MobileDetect(ctx.req.headers['user-agent']) :

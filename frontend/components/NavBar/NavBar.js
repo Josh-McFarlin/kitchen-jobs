@@ -30,6 +30,11 @@ class NavBar extends React.PureComponent {
         }));
     };
 
+    logoutAndRefresh = async () => {
+        await signOut();
+        window.location.reload();
+    };
+
     render() {
         const { classes, router, currentUser } = this.props;
         const { drawerOpen } = this.state;
@@ -46,21 +51,31 @@ class NavBar extends React.PureComponent {
                 <Collapse open={drawerOpen} navbar>
                     <Nav navbar>
                         {_.get(currentUser, 'isAdmin', false) && (
-                            <NavItem className={classes.navItem}>
-                                <NavLink
-                                    active={router.asPath === urls.manage}
-                                    href={urls.manage}
-                                >
-                                    Manage
-                                </NavLink>
-                            </NavItem>
+                            <React.Fragment>
+                                <NavItem className={classes.navItem}>
+                                    <NavLink
+                                        active={router.asPath === urls.log}
+                                        href={urls.log}
+                                    >
+                                        Log
+                                    </NavLink>
+                                </NavItem>
+                                <NavItem className={classes.navItem}>
+                                    <NavLink
+                                        active={router.asPath === urls.manage}
+                                        href={urls.manage}
+                                    >
+                                        Manage
+                                    </NavLink>
+                                </NavItem>
+                            </React.Fragment>
                         )}
                     </Nav>
                     <Nav navbar className='ml-auto'>
                         {currentUser.isUser ? (
                             <NavItem className={classes.navItem}>
                                 <NavLink
-                                    onClick={signOut}
+                                    onClick={this.logoutAndRefresh}
                                 >
                                     Sign Out
                                 </NavLink>

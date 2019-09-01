@@ -6,7 +6,7 @@ let firebaseCert;
 try {
     firebaseCert = require('../../serviceAccountKey.json');
 } catch (e) {
-    firebaseCert = JSON.parse(process.env.FIREBASE_CERT);
+    firebaseCert = JSON.parse(process.env.KITCHEN_FIREBASE_CERT);
 }
 
 const config = {
