@@ -10,7 +10,11 @@ try {
     console.error('Service Key file not found!');
 
     try {
-        firebaseCert = JSON.parse(process.env.KITCHEN_FIREBASE_CERT);
+        firebaseCert = JSON.parse(
+            process.env.KITCHEN_FIREBASE_CERT
+            || process.env.kitchen_firebase_cert
+            || process.env.kitchencert
+        );
         console.error('Using Service Key from env!');
     } catch (error) {
         console.error('Service Key env not found! No Service Key to use!');
@@ -20,13 +24,7 @@ try {
 try {
     console.log('Using Service Key with project_id: ', firebaseCert.project_id);
 } catch (e) {
-    try {
-        const certObj = JSON.parse(firebaseCert);
-
-        console.log('Using Service Key with project_id: ', certObj.project_id);
-    } catch (error) {
-        console.error('Invalid Firebase Service Key!');
-    }
+    console.error('Invalid Firebase Service Key!');
 }
 
 const config = {
