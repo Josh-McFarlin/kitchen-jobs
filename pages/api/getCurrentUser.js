@@ -25,6 +25,16 @@ export default async function (req, res) {
                                         ...person
                                     }
                                 });
+                        })
+                        .catch((error) => {
+                            console.error(error);
+
+                            res.status(500).json({
+                                status: 'failed',
+                                user: {
+                                    isUser: false
+                                }
+                            });
                         });
                 } else {
                     console.error('Tried to fetch a user without pre-existing data in database!');

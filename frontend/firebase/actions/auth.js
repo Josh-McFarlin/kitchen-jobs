@@ -35,6 +35,9 @@ export const loginUser = () => {
             })
             .then(() => {
                 window.location.assign(urls.home);
+            })
+            .catch((error) => {
+                console.error(error);
             });
     });
 };
@@ -44,7 +47,10 @@ export const signOut = () =>
         method: 'post',
         mode: 'same-origin',
         credentials: 'include'
-    });
+    })
+        .catch((error) => {
+            console.error(error);
+        });
 
 export const getCurrentUser = (session) =>
     fetch(urls.base + urls.auth.getCurrentUser, {
@@ -59,4 +65,7 @@ export const getCurrentUser = (session) =>
         })
     })
         .then((response) => response.json())
-        .then((json) => json.user);
+        .then((json) => json.user)
+        .catch((error) => {
+            console.error(error);
+        });
