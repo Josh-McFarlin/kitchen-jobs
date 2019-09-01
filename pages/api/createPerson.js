@@ -10,7 +10,9 @@ export default async function (req, res) {
                 status: 'success'
             });
         })
-        .catch(() => {
+        .catch((error) => {
+            console.error(error);
+
             res.status(500).json({
                 status: 'failed'
             });

@@ -9,7 +9,9 @@ export default async function (req, res) {
                 emails
             });
         })
-        .catch(() => {
+        .catch((error) => {
+            console.error(error);
+
             res.status(500).json({
                 status: 'failed'
             });

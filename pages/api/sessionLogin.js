@@ -26,7 +26,9 @@ export default async function (req, res) {
         }, () => {
             res.status(401).send('Unauthorized request!');
         })
-        .catch(() => {
+        .catch((error) => {
+            console.error(error);
+
             res.status(500).send('error');
         });
 }

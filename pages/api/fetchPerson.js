@@ -11,7 +11,9 @@ export default async function (req, res) {
                 person
             });
         })
-        .catch(() => {
+        .catch((error) => {
+            console.error(error);
+
             res.status(500).json({
                 status: 'failed'
             });

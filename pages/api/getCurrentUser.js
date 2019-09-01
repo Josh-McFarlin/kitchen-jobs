@@ -12,20 +12,34 @@ export default async function (req, res) {
         await admin.auth()
             .verifySessionCookie(sessionCookie, false)
             .then(async (decodedClaims) => {
-                const userEmail = decodedClaims.firebase.identities.email[0];
+                const emails = decodedClaims.firebase.identities.email;
 
-                await firebaseActions.people.fetchPerson(userEmail)
-                    .then((person) => {
-                        res.status(200).json({
-                            status: 'success',
-                            user: {
-                                isUser: true,
-                                ...person
-                            }
+                if (emails.length > 0) {
+                    await firebaseActions.people.fetchPerson(emails[0])
+                        .then((person) => {
+                            res.status(200)
+                                .json({
+                                    status: 'success',
+                                    user: {
+                                        isUser: true,
+                                        ...person
+                                    }
+                                });
                         });
+                } else {
+                    console.error('Tried to fetch a user without pre-existing data in database!');
+
+                    res.status(500).json({
+                        status: 'failed',
+                        user: {
+                            isUser: false
+                        }
                     });
+                }
             })
-            .catch(() => {
+            .catch((error) => {
+                console.error(error);
+
                 res.status(500).json({
                     status: 'failed',
                     user: {
