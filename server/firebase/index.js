@@ -10,11 +10,7 @@ try {
     console.error('Service Key file not found!');
 
     try {
-        firebaseCert = JSON.parse(
-            process.env.KITCHEN_FIREBASE_CERT
-            || process.env.kitchen_firebase_cert
-            || process.env.kitchencert
-        );
+        firebaseCert = JSON.parse(process.env.kitchencert);
         console.error('Using Service Key from env!');
     } catch (error) {
         console.error('Service Key env not found! No Service Key to use!');
