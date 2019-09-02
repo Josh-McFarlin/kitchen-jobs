@@ -16,12 +16,12 @@ const styles = () => ({
     }
 });
 
-class JobSwitcher extends React.Component {
+class JobSwitcher extends React.PureComponent {
     constructor(props) {
         super(props);
 
         const formattedNames = Object.keys(props.emailsToNames)
-            .filter((email) => email !== props.currentUser.email)
+            .filter((email) => !props.job.people.includes(email))
             .map((email) => ({
                 label: props.emailsToNames[email],
                 value: email

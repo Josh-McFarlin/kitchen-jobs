@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'react-jss';
-import { Button, Modal, ModalBody, ModalHeader, ModalFooter } from 'shards-react';
+import { Button } from 'shards-react';
 import { Paper, Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import Router from 'next/router';
 

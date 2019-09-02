@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'react-jss';
-import { Row, Col, Button, ListGroupItem, ListGroup } from 'shards-react';
+import { ListGroupItem, ListGroup } from 'shards-react';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -9,10 +9,8 @@ import { fetchCompletedJobs, fetchEmails } from '../frontend/firebase/actions';
 
 
 const styles = (theme) => ({
-    group: {
-        '&:not(:last-of-type)': {
-            marginBottom: theme.spacing.unit * 2
-        }
+    job: {
+        marginBottom: theme.spacing.unit * 2
     },
     ownJob: {
         textDecoration: 'underline',
@@ -48,7 +46,7 @@ class LogPage extends React.PureComponent {
                 {jobs.map((job) => (
                     <ListGroup
                         key={job.title + job.date._seconds}
-                        className={classes.group}
+                        className={classes.job}
                     >
                         <ListGroupItem theme='secondary'>
                             <b>{job.title} due at {moment.unix(job.date._seconds).format('h:mma, dddd MMM Do')}</b>

@@ -13,10 +13,8 @@ import JobSwitcher from './JobSwitcher';
 
 
 const styles = (theme) => ({
-    group: {
-        '&:not(:last-of-type)': {
-            marginBottom: theme.spacing.unit * 2
-        }
+    job: {
+        marginBottom: theme.spacing.unit * 2
     },
     clickable: {
         cursor: 'pointer'
@@ -137,7 +135,7 @@ class KitchenJob extends React.PureComponent {
                         </Button>
                     </ModalFooter>
                 </Modal>
-                <ListGroup className={classes.group}>
+                <ListGroup className={classes.job}>
                     <ListGroupItem theme='secondary'>
                         <div className={classes.header}>
                             <div className={classes.headerText}>

@@ -19,7 +19,7 @@ const styles = () => ({
     }
 });
 
-class JobFinalizer extends React.Component {
+class JobFinalizer extends React.PureComponent {
     constructor(props) {
         super(props);
 
@@ -41,11 +41,23 @@ class JobFinalizer extends React.Component {
             value: email
         }));
 
+        const skipped = _.get(props, 'job.skipped', [])
+            .map((email) => ({
+                label: props.emailsToNames[email],
+                value: email
+            }));
+
+        const stole = _.get(props, 'job.stole', [])
+            .map((email) => ({
+                label: props.emailsToNames[email],
+                value: email
+            }));
+
         this.state = {
             completed: _.get(props, 'job.completed', false),
             completedAt: completedObj.format('HH:mm'),
-            skipped: _.get(props, 'job.skipped', []),
-            stole: _.get(props, 'job.stole', []),
+            skipped,
+            stole,
             notes: _.get(props, 'job.notes', ''),
             people,
             otherPeople
@@ -59,7 +71,8 @@ class JobFinalizer extends React.Component {
         const date = moment().format('YYYY-MM-DD');
 
         await editJob(job.key, {
-            completed: completed === 'true',
+            completed: (_.isBoolean(completed) && completed === true)
+                || (_.isString(completed) && completed === 'true'),
             completedAt: moment(`${date} ${completedAt}`, 'YYYY-MM-DD HH:mm').valueOf(),
             skipped: skipped.map((person) => person.value),
             stole: stole.map((person) => person.value),
@@ -83,8 +96,6 @@ class JobFinalizer extends React.Component {
     };
 
     stoleChange = (event) => {
-        console.log(event);
-
         this.setState({
             stole: event
         });
