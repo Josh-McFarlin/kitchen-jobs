@@ -172,3 +172,5 @@ modules.xml
 build/
 .next/
 /serviceAccountKey.json
+/sendgridkey.txt
+/dev-env.js

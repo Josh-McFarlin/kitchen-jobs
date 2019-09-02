@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'react-jss';
-import { Row, Col, Button } from 'shards-react';
+import { Row, Col, Button, Alert } from 'shards-react';
 
 import KitchenJob from '../frontend/components/KitchenJob';
 import JobCreator from '../frontend/components/JobCreator';
@@ -26,17 +26,25 @@ const styles = (theme) => ({
     createButton: {
         float: 'right',
         marginBottom: theme.spacing.unit * 2
+    },
+    alert: {
+        position: 'absolute',
+        width: '100%',
+        left: 0,
+        bottom: 0,
+        margin: 0
     }
 });
 
 class IndexPage extends React.PureComponent {
-    static async getInitialProps() {
+    static async getInitialProps({ query }) {
         const jobs = await fetchJobs();
         const emailsToNames = await fetchEmails();
 
         return {
             jobs,
-            emailsToNames
+            emailsToNames,
+            query
         };
     }
 
@@ -55,7 +63,7 @@ class IndexPage extends React.PureComponent {
     };
 
     render() {
-        const { classes, currentUser, jobs, emailsToNames } = this.props;
+        const { classes, currentUser, jobs, emailsToNames, query } = this.props;
         const { showCreator } = this.state;
 
         return (
@@ -82,8 +90,20 @@ class IndexPage extends React.PureComponent {
                 <JobCreator
                     modalOpen={showCreator}
                     closeModal={this.toggleCreator}
+                    currentUser={currentUser}
                     emailsToNames={emailsToNames}
                 />
+                {(query.switch != null) && (
+                    <Alert
+                        className={classes.alert}
+                        theme={query.switch === 'success' ? 'success' : 'warning'}
+                    >
+                        {query.switch === 'success' ?
+                            'Successfully switched kitchen jobs!' :
+                            'An error occurred while switching kitchen jobs! Try again later, or contact a manager!'
+                        }
+                    </Alert>
+                )}
             </React.Fragment>
         );
     }
@@ -93,7 +113,8 @@ IndexPage.propTypes = {
     classes: PropTypes.object.isRequired,
     currentUser: PropTypes.object.isRequired,
     jobs: PropTypes.array.isRequired,
-    emailsToNames: PropTypes.object.isRequired
+    emailsToNames: PropTypes.object.isRequired,
+    query: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(IndexPage);

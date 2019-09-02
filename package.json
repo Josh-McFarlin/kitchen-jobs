@@ -19,6 +19,7 @@
   "dependencies": {
     "@material-ui/core": "^4.4.0",
     "@material-ui/icons": "^4.2.1",
+    "@sendgrid/mail": "^6.4.0",
     "@zeit/next-css": "^1.0.1",
     "body-parser": "^1.19.0",
     "bootstrap-css-only": "^4.3.1",
@@ -46,7 +47,8 @@
     "universal-cookie": "^3.1.0"
   },
   "scripts": {
-    "upload-secret": "now secrets add KITCHEN_FIREBASE_CERT \"$(<serviceAccountKey.json)\"",
+    "firebase-secret": "now secrets add kitchencert \"$(<serviceAccountKey.json)\"",
+    "sendgrid-secret": "now secrets add sendgridkey \"$(<sendgridkey.txt)\"",
     "dev": "next",
     "build": "next build",
     "now-build": "next build",

@@ -6,7 +6,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import Select from 'react-select';
 
-import { editJob } from '../../firebase/actions';
+import { switchRequest } from '../../firebase/actions';
 
 
 const styles = () => ({
@@ -21,6 +21,7 @@ class JobSwitcher extends React.Component {
         super(props);
 
         const formattedNames = Object.keys(props.emailsToNames)
+            .filter((email) => email !== props.currentUser.email)
             .map((email) => ({
                 label: props.emailsToNames[email],
                 value: email
@@ -28,29 +29,27 @@ class JobSwitcher extends React.Component {
 
         const dateObj = _.has(props, 'job.date._seconds') ? moment.unix(_.get(props, 'job.date._seconds')) : moment();
 
-        const people = _.get(props, 'job.people', [])
-            .map((email) => ({
-                label: props.emailsToNames[email],
-                value: email
-            }));
-
         this.state = {
-            date: dateObj.format('YYYY-MM-DD'),
-            time: dateObj.format('HH:mm'),
+            date: dateObj.format('dddd, MMM Do'),
+            time: dateObj.format('h:mma'),
             title: _.get(props, 'job.title', ''),
-            people,
+            person: {},
             formattedNames
         };
     }
 
     confirmSwitch = async () => {
-        const { closeModal, job } = this.props;
-        const { date, time, title, people } = this.state;
+        const { closeModal, job, currentUser, emailsToNames } = this.props;
+        const { date, time, title, person } = this.state;
 
-        await editJob(job.key, {
+        await switchRequest(job.key, {
+            fromName: emailsToNames[currentUser.email],
+            fromEmail: currentUser.email,
+            toName: person.label,
+            toEmail: person.value,
+            date,
             title,
-            date: moment(`${date} ${time}`, 'YYYY-MM-DD HH:mm').valueOf(),
-            people: people.map((person) => person.value)
+            dueAt: time
         });
 
         closeModal();
@@ -65,13 +64,13 @@ class JobSwitcher extends React.Component {
 
     peopleChange = (event) => {
         this.setState({
-            people: event
+            person: event
         });
     };
 
     render() {
-        const { classes, modalOpen, closeModal, job } = this.props;
-        const { date, time, title, people, formattedNames } = this.state;
+        const { classes, modalOpen, closeModal } = this.props;
+        const { date, person, formattedNames } = this.state;
 
         return (
             <Modal
@@ -83,7 +82,7 @@ class JobSwitcher extends React.Component {
                     className={classes.header}
                     titleClass={classes.title}
                 >
-                    Job Switcher
+                    Job Switcher for {date}
                 </ModalHeader>
                 <ModalBody>
                     <Form>
@@ -92,7 +91,7 @@ class JobSwitcher extends React.Component {
                             <Select
                                 id='#switch'
                                 options={formattedNames}
-                                value={people}
+                                value={person}
                                 onChange={this.peopleChange}
                             />
                         </FormGroup>
@@ -121,6 +120,7 @@ JobSwitcher.propTypes = {
     classes: PropTypes.object.isRequired,
     modalOpen: PropTypes.bool.isRequired,
     closeModal: PropTypes.func.isRequired,
+    currentUser: PropTypes.object.isRequired,
     emailsToNames: PropTypes.object.isRequired,
     job: PropTypes.object.isRequired
 };

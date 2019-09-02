@@ -10,9 +10,6 @@ const createPerson = (user) =>
             email: user.email,
             photo: user.photoURL,
             uid: user.uid,
-            jobsCompleted: 0,
-            jobsSkipped: 0,
-            jobsStolen: 0,
             isAdmin: false
         });
 

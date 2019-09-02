@@ -24,12 +24,24 @@ const styles = (theme) => ({
     ownJob: {
         textDecoration: 'underline',
         cursor: 'pointer',
-        backgroundColor: '#ffcbb1'
+        backgroundColor: '#ffd08a'
     },
     endIcon: {
         float: 'right',
         cursor: 'pointer',
         margin: `0 ${theme.spacing.unit}px`
+    },
+    header: {
+        display: 'flex',
+        flexDirection: 'row'
+    },
+    headerText: {
+        flex: 1,
+        whiteSpace: 'nowrap'
+    },
+    headerImages: {
+        display: 'flex',
+        alignItems: 'flex-end'
     }
 });
 
@@ -127,30 +139,42 @@ class KitchenJob extends React.PureComponent {
                 </Modal>
                 <ListGroup className={classes.group}>
                     <ListGroupItem theme='secondary'>
-                        <b>{job.title} due at {moment.unix(job.date._seconds).format('h:mma, dddd MMM Do')}</b>
-                        {job.completed ? (
-                            <CheckBox
-                                className={classes.endIcon}
-                                onClick={currentUser.isAdmin ? this.toggleFinalizer : this.preventRerender}
-                            />
-                        ) : (
-                            <CheckBoxOutlineBlank
-                                className={classes.endIcon}
-                                onClick={currentUser.isAdmin ? this.toggleFinalizer : this.preventRerender}
-                            />
-                        )}
-                        {currentUser.isAdmin && (
-                            <EditIcon
-                                className={classes.endIcon}
-                                onClick={this.toggleEditor}
-                            />
-                        )}
-                        {currentUser.isAdmin && (
-                            <DeleteIcon
-                                className={classes.endIcon}
-                                onClick={this.toggleDelete}
-                            />
-                        )}
+                        <div className={classes.header}>
+                            <div className={classes.headerText}>
+                                <b>
+                                    {job.title} on
+                                    <wbr />
+                                    {' '}{moment.unix(job.date._seconds).format('dddd, MMM Do')}
+                                    <wbr />
+                                    {' '}Due at {moment.unix(job.date._seconds).format('h:mma')}
+                                </b>
+                            </div>
+                            <div className={classes.headerImages}>
+                                {job.completed ? (
+                                    <CheckBox
+                                        className={classes.endIcon}
+                                        onClick={currentUser.isAdmin ? this.toggleFinalizer : this.preventRerender}
+                                    />
+                                ) : (
+                                    <CheckBoxOutlineBlank
+                                        className={classes.endIcon}
+                                        onClick={currentUser.isAdmin ? this.toggleFinalizer : this.preventRerender}
+                                    />
+                                )}
+                                {currentUser.isAdmin && (
+                                    <EditIcon
+                                        className={classes.endIcon}
+                                        onClick={this.toggleEditor}
+                                    />
+                                )}
+                                {currentUser.isAdmin && (
+                                    <DeleteIcon
+                                        className={classes.endIcon}
+                                        onClick={this.toggleDelete}
+                                    />
+                                )}
+                            </div>
+                        </div>
                     </ListGroupItem>
                     {job.people.map((email) => (
                         <ListGroupItem
@@ -178,6 +202,7 @@ class KitchenJob extends React.PureComponent {
                     modalOpen={showSwitcher}
                     closeModal={this.toggleSwitcher}
                     emailsToNames={emailsToNames}
+                    currentUser={currentUser}
                     job={job}
                 />
             </React.Fragment>

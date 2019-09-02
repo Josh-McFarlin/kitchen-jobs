@@ -1,5 +1,6 @@
 {
   "env": {
-    "kitchencert": "@kitchencert"
+    "kitchencert": "@kitchencert",
+    "sendgridkey": "@sendgridkey"
   }
 }

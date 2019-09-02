@@ -9,7 +9,7 @@ try {
     firebaseCert = require('../../serviceAccountKey.json');
 
     if (prod) {
-        console.error('Using Service Key from file!');
+        console.log('Using Service Key from file!');
     }
 } catch (e) {
     console.error('Service Key file not found!');
@@ -18,7 +18,7 @@ try {
         firebaseCert = JSON.parse(process.env.kitchencert);
 
         if (prod) {
-            console.error('Using Service Key from env!');
+            console.log('Using Service Key from env!');
         }
     } catch (error) {
         console.error('Service Key env not found! No Service Key to use!');

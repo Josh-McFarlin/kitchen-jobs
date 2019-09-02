@@ -5,6 +5,7 @@ import { Button, Modal, ModalBody, ModalHeader, ModalFooter } from 'shards-react
 import { Paper, Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import Router from 'next/router';
 
+import ConfirmDialog from '../frontend/components/ConfirmDialog';
 import urls from '../utils/urls';
 import { fetchPeople, deletePerson, editPerson } from '../frontend/firebase/actions';
 
@@ -44,7 +45,9 @@ class ManagePage extends React.PureComponent {
 
         this.state = {
             showDelete: false,
-            deleteEmail: null
+            deleteEmail: null,
+            showOwner: false,
+            ownerEmail: null
         };
     }
 
@@ -69,6 +72,36 @@ class ManagePage extends React.PureComponent {
         window.location.reload();
     };
 
+    startOwner = (email) => {
+        this.setState({
+            showOwner: true,
+            ownerEmail: email
+        });
+    };
+
+    cancelOwner = () => {
+        this.setState({
+            showOwner: false,
+            ownerEmail: null
+        });
+    };
+
+    makeOwner = async (email) => {
+        const { currentUser } = this.props;
+
+        await editPerson(currentUser.email, {
+            isOwner: false,
+            isAdmin: false
+        });
+
+        await editPerson(email, {
+            isOwner: true,
+            isAdmin: true
+        });
+
+        window.location.reload();
+    };
+
     makeAdmin = async (email) => {
         await editPerson(email, {
             isAdmin: true
@@ -87,31 +120,26 @@ class ManagePage extends React.PureComponent {
 
     render() {
         const { classes, currentUser, allPeople, isMobile } = this.props;
-        const { showDelete, deleteEmail } = this.state;
+        const { showDelete, deleteEmail, showOwner, ownerEmail } = this.state;
 
         return (
             <React.Fragment>
-                <Modal
-                    open={showDelete}
-                    toggle={this.cancelDelete}
-                >
-                    <ModalHeader>Delete User?</ModalHeader>
-                    <ModalBody>Are you sure you want to delete the account associated with <b>{deleteEmail}</b>?</ModalBody>
-                    <ModalFooter>
-                        <Button
-                            theme='success'
-                            onClick={this.cancelDelete}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            theme='danger'
-                            onClick={this.confirmDelete}
-                        >
-                            Delete User
-                        </Button>
-                    </ModalFooter>
-                </Modal>
+                <ConfirmDialog
+                    header='Delete User?'
+                    message={`Are you sure you want to delete the account associated with: ${deleteEmail}`}
+                    visible={showDelete}
+                    toggleVisibility={this.cancelDelete}
+                    confirmedAction={this.confirmDelete}
+                    confirmText='Delete User'
+                />
+                <ConfirmDialog
+                    header='Make Owner?'
+                    message={`Are you sure you want to transfer complete ownership to: ${ownerEmail}? This is irreversible!`}
+                    visible={showOwner}
+                    toggleVisibility={this.cancelOwner}
+                    confirmedAction={this.makeOwner}
+                    confirmText='Delete User'
+                />
                 <Paper className={classes.paper}>
                     <Table className={classes.table}>
                         <TableHead>
@@ -121,10 +149,12 @@ class ManagePage extends React.PureComponent {
                                 )}
                                 <TableCell align='center'>Name</TableCell>
                                 <TableCell align='center'>Email</TableCell>
-                                <TableCell align='center'>Jobs Completed</TableCell>
-                                <TableCell align='center'>Jobs Skipped</TableCell>
-                                <TableCell align='center'>Jobs Stolen</TableCell>
-                                <TableCell align='center'>Admin</TableCell>
+                                {(currentUser.isOwner) && (
+                                    <React.Fragment>
+                                        <TableCell align='center'>Owner</TableCell>
+                                        <TableCell align='center'>Admin</TableCell>
+                                    </React.Fragment>
+                                )}
                                 <TableCell align='center'>Delete</TableCell>
                             </TableRow>
                         </TableHead>
@@ -150,40 +180,44 @@ class ManagePage extends React.PureComponent {
                                     <TableCell align='center'>
                                         {item.email}
                                     </TableCell>
-                                    <TableCell align='center'>
-                                        {item.jobsCompleted}
-                                    </TableCell>
-                                    <TableCell align='center'>
-                                        {item.jobsSkipped}
-                                    </TableCell>
-                                    <TableCell align='center'>
-                                        {item.jobsStolen}
-                                    </TableCell>
-                                    {(item.isAdmin) ? (
-                                        <TableCell align='center'>
-                                            <Button
-                                                theme='danger'
-                                                disabled={item.isAdmin && currentUser.email !== item.email}
-                                                onClick={() => this.removeAdmin(item.email)}
-                                            >
-                                                Remove Manager
-                                            </Button>
-                                        </TableCell>
-                                    ) : (
-                                        <TableCell align='center'>
-                                            <Button
-                                                theme='info'
-                                                disabled={item.isAdmin && currentUser.email !== item.email}
-                                                onClick={() => this.makeAdmin(item.email)}
-                                            >
-                                                Make Manager
-                                            </Button>
-                                        </TableCell>
+                                    {(currentUser.isOwner) && (
+                                        <React.Fragment>
+                                            <TableCell align='center'>
+                                                <Button
+                                                    theme='danger'
+                                                    disabled={item.isOwner}
+                                                    onClick={() => this.startOwner(item.email)}
+                                                >
+                                                    Make Owner
+                                                </Button>
+                                            </TableCell>
+                                            {(item.isAdmin) ? (
+                                                <TableCell align='center'>
+                                                    <Button
+                                                        theme='danger'
+                                                        disabled={item.isAdmin && currentUser.email !== item.email}
+                                                        onClick={() => this.removeAdmin(item.email)}
+                                                    >
+                                                        Remove Manager
+                                                    </Button>
+                                                </TableCell>
+                                            ) : (
+                                                <TableCell align='center'>
+                                                    <Button
+                                                        theme='info'
+                                                        disabled={item.isAdmin && currentUser.email !== item.email}
+                                                        onClick={() => this.makeAdmin(item.email)}
+                                                    >
+                                                        Make Manager
+                                                    </Button>
+                                                </TableCell>
+                                            )}
+                                        </React.Fragment>
                                     )}
                                     <TableCell align='center'>
                                         <Button
                                             theme='danger'
-                                            disabled={item.isAdmin || currentUser.email === item.email}
+                                            disabled={item.isOwner || item.isAdmin || currentUser.email === item.email}
                                             onClick={() => this.startDelete(item.email)}
                                         >
                                             Delete User

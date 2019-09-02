@@ -21,6 +21,8 @@ module.exports = {
         fetchCompletedJobs: '/api/fetchCompletedJobs',
         createJob: '/api/createJob',
         deleteJob: '/api/deleteJob',
-        editJob: '/api/editJob'
+        editJob: '/api/editJob',
+        switchRequest: '/api/switchRequest',
+        confirmSwitch: (key) => `/api/confirmSwitch/${key}`
     }
 };

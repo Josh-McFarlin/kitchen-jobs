@@ -1,4 +1,6 @@
 const firebase = require('../index');
+const sendGridActions = require('../../sendgrid/actions');
+const urls = require('../../../utils/urls');
 
 
 const fetchJobs = () =>
@@ -56,47 +58,25 @@ const deleteJob = (key) =>
         .doc(key)
         .delete();
 
-const editJob = async (key, { date, completedAt, ...rest }) => {
-    const data = rest;
+const editJob = async (key, job) => {
+    const data = Object.assign({}, job);
 
-    if (date != null) {
-        data.date = firebase.firestore.Timestamp.fromMillis(date);
+    if (data.date != null) {
+        data.date = firebase.firestore.Timestamp.fromMillis(data.date);
     }
 
-    if (completedAt != null) {
-        data.completedAt = firebase.firestore.Timestamp.fromMillis(completedAt);
+    if (data.completedAt != null) {
+        data.completedAt = firebase.firestore.Timestamp.fromMillis(data.completedAt);
     }
 
-    console.log('skipped', rest.skipped);
-    if (rest.skipped) {
-        rest.skipped.forEach(async (email) => {
-            const increment = firebase.firestore.FieldValue.increment(1);
+    if (data.people != null) {
+        const people = data.people || [];
+        const skipped = data.skipped || [];
+        const stole = data.stole || [];
 
-            const personRef =
-                firebase.firestore()
-                    .collection('people')
-                    .doc(email);
-
-            await personRef.update({
-                jobsSkipped: increment
-            });
-        });
-    }
-
-    console.log('stolen', rest.stole);
-    if (rest.stole) {
-        rest.stole.forEach(async (email) => {
-            const increment = firebase.firestore.FieldValue.increment(1);
-
-            const personRef =
-                firebase.firestore()
-                    .collection('people')
-                    .doc(email);
-
-            await personRef.update({
-                jobsStolen: increment
-            });
-        });
+        data.doneBy =
+            people.concat(stole)
+                .filter((email) => skipped.indexOf(email) === -1);
     }
 
     await firebase.firestore()
@@ -107,10 +87,77 @@ const editJob = async (key, { date, completedAt, ...rest }) => {
         });
 };
 
+
+const switchRequest = async (key, switchInfo) => {
+    const switchRef = await firebase.firestore()
+        .collection('switchRequests')
+        .add({
+            job: key,
+            from: switchInfo.fromEmail,
+            to: switchInfo.toEmail
+        });
+
+    await sendGridActions.emails.sendSwitch({
+        fromName: switchInfo.fromName,
+        toName: switchInfo.toName,
+        toEmail: switchInfo.toEmail,
+        date: switchInfo.date,
+        title: switchInfo.title,
+        dueAt: switchInfo.dueAt,
+        switchLink: urls.base + urls.api.confirmSwitch(switchRef.id)
+    });
+};
+
+const confirmSwitch = async (key) => {
+    await firebase.firestore()
+        .collection('switchRequests')
+        .doc(key)
+        .get()
+        .then(async (doc) => {
+            if (doc.exists) {
+                const switchData = doc.data();
+
+                await firebase.firestore()
+                    .collection('jobs')
+                    .doc(switchData.job)
+                    .get()
+                    .then(async (jobDoc) => {
+                        if (jobDoc.exists) {
+                            const oldJob = jobDoc.data();
+
+                            const people = oldJob.people || [];
+                            const foundPerson = people.indexOf(switchData.from);
+                            if (foundPerson !== -1) {
+                                people[foundPerson] = switchData.to;
+                            }
+
+                            const switches = oldJob.switches || [];
+                            switches.push({
+                                from: switchData.from,
+                                to: switchData.to
+                            });
+
+                            await editJob(switchData.job, {
+                                people,
+                                switches
+                            });
+
+                            await firebase.firestore()
+                                .collection('switchRequests')
+                                .doc(key)
+                                .delete();
+                        }
+                    });
+            }
+        });
+};
+
 module.exports = {
     fetchJobs,
     fetchCompletedJobs,
     createJob,
     deleteJob,
-    editJob
+    editJob,
+    switchRequest,
+    confirmSwitch
 };

@@ -60,3 +60,17 @@ export const editJob = (key, job) =>
             job
         })
     });
+
+export const switchRequest = (key, switchInfo) =>
+    fetch(urls.base + urls.api.switchRequest, {
+        method: 'post',
+        mode: 'same-origin',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            key,
+            switchInfo
+        })
+    });

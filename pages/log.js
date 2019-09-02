@@ -105,6 +105,21 @@ class LogPage extends React.PureComponent {
                             </React.Fragment>
                         )}
 
+                        {(job.switches != null && job.switches.length > 0) && (
+                            <React.Fragment>
+                                <ListGroupItem>
+                                    Switches:
+                                    <ul>
+                                        {job.switches.map(({ from, to }) => (
+                                            <li key={`${from} to ${to}`}>
+                                                {_.get(emailsToNames, from, from)} → {_.get(emailsToNames, to, to)}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </ListGroupItem>
+                            </React.Fragment>
+                        )}
+
                         {(job.notes != null && job.notes.length > 0) && (
                             <ListGroupItem>
                                 Notes: {job.notes}
