@@ -3,13 +3,9 @@ import PropTypes from 'prop-types';
 import withStyles from 'react-jss';
 import { Row, Col, Button, ListGroupItem, ListGroup } from 'shards-react';
 import _ from 'lodash';
-
-import KitchenJob from '../frontend/components/KitchenJob';
-import JobCreator from '../frontend/components/JobCreator';
-import JobSwitcher from '../frontend/components/JobSwitcher';
-import { fetchCompletedJobs, fetchEmails } from '../frontend/firebase/actions';
 import moment from 'moment';
-import { CheckBox, CheckBoxOutlineBlank, Delete as DeleteIcon, Edit as EditIcon } from '@material-ui/icons';
+
+import { fetchCompletedJobs, fetchEmails } from '../frontend/firebase/actions';
 
 
 const styles = (theme) => ({
@@ -45,26 +41,71 @@ class LogPage extends React.PureComponent {
     }
 
     render() {
-        const { classes, currentUser, jobs, emailsToNames } = this.props;
+        const { classes, jobs, emailsToNames } = this.props;
 
         return (
             <React.Fragment>
                 {jobs.map((job) => (
-                    <ListGroup className={classes.group}>
+                    <ListGroup
+                        key={job.title + job.date._seconds}
+                        className={classes.group}
+                    >
                         <ListGroupItem theme='secondary'>
                             <b>{job.title} due at {moment.unix(job.date._seconds).format('h:mma, dddd MMM Do')}</b>
                         </ListGroupItem>
-                        {job.people.map((email) => (
-                            <ListGroupItem key={email}>
-                                {_.get(emailsToNames, email, email)}
-                            </ListGroupItem>
-                        ))}
-                        {job.completedAt != null && (
+
+                        {(job.completedAt != null) && (
                             <ListGroupItem>
                                 Completed At: {moment.unix(job.completedAt._seconds).format('h:mma')}
                             </ListGroupItem>
                         )}
-                        {job.notes != null && (
+
+                        {(job.people != null && job.people.length > 0) && (
+                            <React.Fragment>
+                                <ListGroupItem>
+                                    Assigned To:
+                                    <ul>
+                                        {job.people.map((email) => (
+                                            <li key={email}>
+                                                {_.get(emailsToNames, email, email)}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </ListGroupItem>
+                            </React.Fragment>
+                        )}
+
+                        {(job.skipped != null && job.skipped.length > 0) && (
+                            <React.Fragment>
+                                <ListGroupItem>
+                                    Skipped By:
+                                    <ul>
+                                        {job.skipped.map((email) => (
+                                            <li key={email}>
+                                                {_.get(emailsToNames, email, email)}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </ListGroupItem>
+                            </React.Fragment>
+                        )}
+
+                        {(job.stole != null && job.stole.length > 0) && (
+                            <React.Fragment>
+                                <ListGroupItem>
+                                    Stolen By:
+                                    <ul>
+                                        {job.stole.map((email) => (
+                                            <li key={email}>
+                                                {_.get(emailsToNames, email, email)}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </ListGroupItem>
+                            </React.Fragment>
+                        )}
+
+                        {(job.notes != null && job.notes.length > 0) && (
                             <ListGroupItem>
                                 Notes: {job.notes}
                             </ListGroupItem>
@@ -78,7 +119,6 @@ class LogPage extends React.PureComponent {
 
 LogPage.propTypes = {
     classes: PropTypes.object.isRequired,
-    currentUser: PropTypes.object.isRequired,
     jobs: PropTypes.array.isRequired,
     emailsToNames: PropTypes.object.isRequired
 };

@@ -3,12 +3,10 @@ import PropTypes from 'prop-types';
 import withStyles from 'react-jss';
 import { Button, Modal, ModalBody, ModalHeader, ModalFooter } from 'shards-react';
 import { Paper, Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
-import moment from 'moment';
-import _ from 'lodash';
 import Router from 'next/router';
 
 import urls from '../utils/urls';
-import { fetchPeople, deletePerson } from '../frontend/firebase/actions';
+import { fetchPeople, deletePerson, editPerson } from '../frontend/firebase/actions';
 
 
 const styles = () => ({
@@ -71,6 +69,22 @@ class ManagePage extends React.PureComponent {
         window.location.reload();
     };
 
+    makeAdmin = async (email) => {
+        await editPerson(email, {
+            isAdmin: true
+        });
+
+        window.location.reload();
+    };
+
+    removeAdmin = async (email) => {
+        await editPerson(email, {
+            isAdmin: false
+        });
+
+        window.location.reload();
+    };
+
     render() {
         const { classes, currentUser, allPeople, isMobile } = this.props;
         const { showDelete, deleteEmail } = this.state;
@@ -110,6 +124,7 @@ class ManagePage extends React.PureComponent {
                                 <TableCell align='center'>Jobs Completed</TableCell>
                                 <TableCell align='center'>Jobs Skipped</TableCell>
                                 <TableCell align='center'>Jobs Stolen</TableCell>
+                                <TableCell align='center'>Admin</TableCell>
                                 <TableCell align='center'>Delete</TableCell>
                             </TableRow>
                         </TableHead>
@@ -144,10 +159,31 @@ class ManagePage extends React.PureComponent {
                                     <TableCell align='center'>
                                         {item.jobsStolen}
                                     </TableCell>
+                                    {(item.isAdmin) ? (
+                                        <TableCell align='center'>
+                                            <Button
+                                                theme='danger'
+                                                disabled={item.isAdmin && currentUser.email !== item.email}
+                                                onClick={() => this.removeAdmin(item.email)}
+                                            >
+                                                Remove Manager
+                                            </Button>
+                                        </TableCell>
+                                    ) : (
+                                        <TableCell align='center'>
+                                            <Button
+                                                theme='info'
+                                                disabled={item.isAdmin && currentUser.email !== item.email}
+                                                onClick={() => this.makeAdmin(item.email)}
+                                            >
+                                                Make Manager
+                                            </Button>
+                                        </TableCell>
+                                    )}
                                     <TableCell align='center'>
                                         <Button
                                             theme='danger'
-                                            disabled={currentUser.email === item.email}
+                                            disabled={item.isAdmin || currentUser.email === item.email}
                                             onClick={() => this.startDelete(item.email)}
                                         >
                                             Delete User

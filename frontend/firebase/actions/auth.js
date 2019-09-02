@@ -5,41 +5,31 @@ import urls from '../../../utils/urls';
 import { createPerson } from './people';
 
 
-export const loginUser = () => {
+export const loginUser = async () => {
     const provider = new firebase.auth.GoogleAuthProvider();
 
-    firebase.auth().signInWithPopup(provider).then(async (result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        // const token = result.credential.accessToken;
+    const { user, additionalUserInfo } = await firebase.auth().signInWithPopup(provider);
+    const idToken = await user.getIdToken();
 
-        const { user, additionalUserInfo } = result;
-
-        await user.getIdToken()
-            .then((idToken) =>
-                fetch(urls.auth.sessionLogin, {
-                    method: 'post',
-                    mode: 'same-origin',
-                    credentials: 'include',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        idToken
-                    })
-                }))
-            .then(() => firebase.auth().signOut())
-            .then(async () => {
-                if (additionalUserInfo.isNewUser) {
-                    await createPerson(user);
-                }
-            })
-            .then(() => {
-                window.location.assign(urls.home);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+    await fetch(urls.auth.sessionLogin, {
+        method: 'post',
+        mode: 'same-origin',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            idToken
+        })
     });
+
+    await firebase.auth().signOut();
+
+    if (additionalUserInfo.isNewUser) {
+        await createPerson(user);
+    }
+
+    window.location.assign(urls.home);
 };
 
 export const signOut = () =>
@@ -47,10 +37,7 @@ export const signOut = () =>
         method: 'post',
         mode: 'same-origin',
         credentials: 'include'
-    })
-        .catch((error) => {
-            console.error(error);
-        });
+    });
 
 export const getCurrentUser = (session) =>
     fetch(urls.base + urls.auth.getCurrentUser, {
@@ -65,7 +52,4 @@ export const getCurrentUser = (session) =>
         })
     })
         .then((response) => response.json())
-        .then((json) => json.user)
-        .catch((error) => {
-            console.error(error);
-        });
+        .then((json) => json.user);

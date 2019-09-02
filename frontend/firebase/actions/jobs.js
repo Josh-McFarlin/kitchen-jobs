@@ -10,10 +10,7 @@ export const fetchJobs = () =>
         credentials: 'include'
     })
         .then((response) => response.json())
-        .then((json) => json.jobs)
-        .catch((error) => {
-            console.error(error);
-        });
+        .then((json) => json.jobs);
 
 export const fetchCompletedJobs = () =>
     fetch(urls.base + urls.api.fetchCompletedJobs, {
@@ -22,10 +19,7 @@ export const fetchCompletedJobs = () =>
         credentials: 'include'
     })
         .then((response) => response.json())
-        .then((json) => json.jobs)
-        .catch((error) => {
-            console.error(error);
-        });
+        .then((json) => json.jobs);
 
 export const createJob = (job) =>
     fetch(urls.base + urls.api.createJob, {
@@ -38,10 +32,7 @@ export const createJob = (job) =>
         body: JSON.stringify({
             job
         })
-    })
-        .catch((error) => {
-            console.error(error);
-        });
+    });
 
 export const deleteJob = (key) =>
     fetch(urls.base + urls.api.deleteJob, {
@@ -54,10 +45,7 @@ export const deleteJob = (key) =>
         body: JSON.stringify({
             key
         })
-    })
-        .catch((error) => {
-            console.error(error);
-        });
+    });
 
 export const editJob = (key, job) =>
     fetch(urls.base + urls.api.editJob, {
@@ -71,7 +59,4 @@ export const editJob = (key, job) =>
             key,
             job
         })
-    })
-        .catch((error) => {
-            console.error(error);
-        });
+    });

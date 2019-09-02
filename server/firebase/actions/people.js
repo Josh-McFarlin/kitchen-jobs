@@ -9,6 +9,7 @@ const createPerson = (user) =>
             name: user.displayName,
             email: user.email,
             photo: user.photoURL,
+            uid: user.uid,
             jobsCompleted: 0,
             jobsSkipped: 0,
             jobsStolen: 0,
@@ -19,7 +20,28 @@ const deletePerson = (email) =>
     firebase.firestore()
         .collection('people')
         .doc(email)
-        .delete();
+        .get()
+        .then(async (doc) => {
+            if (doc.exists) {
+                const { uid } = doc.data();
+
+                await firebase.auth()
+                    .deleteUser(uid);
+
+                await firebase.firestore()
+                    .collection('people')
+                    .doc(email)
+                    .delete();
+            }
+        });
+
+const editPerson = (email, data) =>
+    firebase.firestore()
+        .collection('people')
+        .doc(email)
+        .set(data, {
+            merge: true
+        });
 
 const fetchPeople = () =>
     firebase.firestore()
@@ -63,6 +85,7 @@ const fetchPerson = (email) =>
 module.exports = {
     createPerson,
     deletePerson,
+    editPerson,
     fetchPeople,
     fetchEmails,
     fetchPerson

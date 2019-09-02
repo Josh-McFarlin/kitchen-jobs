@@ -1,26 +1,36 @@
 const admin = require('firebase-admin');
 
 
+const prod = process.env.NODE_ENV === 'production';
+
 let firebaseCert;
 
 try {
     firebaseCert = require('../../serviceAccountKey.json');
-    console.error('Using Service Key from file!');
+
+    if (prod) {
+        console.error('Using Service Key from file!');
+    }
 } catch (e) {
     console.error('Service Key file not found!');
 
     try {
         firebaseCert = JSON.parse(process.env.kitchencert);
-        console.error('Using Service Key from env!');
+
+        if (prod) {
+            console.error('Using Service Key from env!');
+        }
     } catch (error) {
         console.error('Service Key env not found! No Service Key to use!');
     }
 }
 
-try {
-    console.log('Using Service Key with project_id: ', firebaseCert.project_id);
-} catch (e) {
-    console.error('Invalid Firebase Service Key!');
+if (prod) {
+    try {
+        console.log('Using Service Key with project_id: ', firebaseCert.project_id);
+    } catch (e) {
+        console.error('Invalid Firebase Service Key!');
+    }
 }
 
 const config = {

@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'react-jss';
-import { Button, Modal, ModalBody, ModalHeader, ModalFooter, Form, FormInput, FormGroup } from 'shards-react';
+import { Button, Modal, ModalBody, ModalHeader, ModalFooter, Form, FormGroup } from 'shards-react';
 import _ from 'lodash';
 import moment from 'moment';
 import Select from 'react-select';
 
-import { createJob, editJob } from '../../firebase/actions';
+import { editJob } from '../../firebase/actions';
 
 
 const styles = () => ({
@@ -16,7 +16,7 @@ const styles = () => ({
     }
 });
 
-class JobCreator extends React.Component {
+class JobSwitcher extends React.Component {
     constructor(props) {
         super(props);
 
@@ -43,23 +43,15 @@ class JobCreator extends React.Component {
         };
     }
 
-    confirmCreate = async () => {
+    confirmSwitch = async () => {
         const { closeModal, job } = this.props;
         const { date, time, title, people } = this.state;
 
-        if (job == null) {
-            await createJob({
-                title,
-                date: moment(`${date} ${time}`, 'YYYY-MM-DD HH:mm').valueOf(),
-                people: people.map((person) => person.value)
-            });
-        } else {
-            await editJob(job.key, {
-                title,
-                date: moment(`${date} ${time}`, 'YYYY-MM-DD HH:mm').valueOf(),
-                people: people.map((person) => person.value)
-            });
-        }
+        await editJob(job.key, {
+            title,
+            date: moment(`${date} ${time}`, 'YYYY-MM-DD HH:mm').valueOf(),
+            people: people.map((person) => person.value)
+        });
 
         closeModal();
         window.location.reload();
@@ -91,47 +83,15 @@ class JobCreator extends React.Component {
                     className={classes.header}
                     titleClass={classes.title}
                 >
-                    {job == null ? 'Create Job' : 'Edit Job'}
+                    Job Switcher
                 </ModalHeader>
                 <ModalBody>
                     <Form>
                         <FormGroup>
-                            <label htmlFor='#title'>Title</label>
-                            <FormInput
-                                id='#title'
-                                name='title'
-                                placeholder='Lunch'
-                                value={title}
-                                onChange={this.handleChange}
-                            />
-                        </FormGroup>
-                        <FormGroup>
-                            <label htmlFor='#date'>Date</label>
-                            <FormInput
-                                id='#date'
-                                name='date'
-                                type='date'
-                                min={moment().format('YYYY-MM-DD')}
-                                value={date}
-                                onChange={this.handleChange}
-                            />
-                        </FormGroup>
-                        <FormGroup>
-                            <label htmlFor='#time'>Due Time</label>
-                            <FormInput
-                                id='#time'
-                                name='time'
-                                type='time'
-                                value={time}
-                                onChange={this.handleChange}
-                            />
-                        </FormGroup>
-                        <FormGroup>
-                            <label htmlFor='#people'>People</label>
+                            <label htmlFor='#switch'>Who do you want to switch with?</label>
                             <Select
-                                id='#people'
+                                id='#switch'
                                 options={formattedNames}
-                                multi
                                 value={people}
                                 onChange={this.peopleChange}
                             />
@@ -147,9 +107,9 @@ class JobCreator extends React.Component {
                     </Button>
                     <Button
                         theme='primary'
-                        onClick={this.confirmCreate}
+                        onClick={this.confirmSwitch}
                     >
-                        {job == null ? 'Create Job' : 'Edit Job'}
+                        Request Switch
                     </Button>
                 </ModalFooter>
             </Modal>
@@ -157,16 +117,12 @@ class JobCreator extends React.Component {
     }
 }
 
-JobCreator.propTypes = {
+JobSwitcher.propTypes = {
     classes: PropTypes.object.isRequired,
     modalOpen: PropTypes.bool.isRequired,
     closeModal: PropTypes.func.isRequired,
     emailsToNames: PropTypes.object.isRequired,
-    job: PropTypes.object
+    job: PropTypes.object.isRequired
 };
 
-JobCreator.defaultProps = {
-    job: null
-};
-
-export default withStyles(styles)(JobCreator);
+export default withStyles(styles)(JobSwitcher);

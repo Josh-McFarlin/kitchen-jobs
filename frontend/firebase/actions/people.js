@@ -14,10 +14,7 @@ export const createPerson = (user) =>
         body: JSON.stringify({
             user
         })
-    })
-        .catch((error) => {
-            console.error(error);
-        });
+    });
 
 export const deletePerson = (email) =>
     fetch(urls.base + urls.api.deletePerson, {
@@ -30,10 +27,21 @@ export const deletePerson = (email) =>
         body: JSON.stringify({
             email
         })
-    })
-        .catch((error) => {
-            console.error(error);
-        });
+    });
+
+export const editPerson = (email, data) =>
+    fetch(urls.base + urls.api.editPerson, {
+        method: 'post',
+        mode: 'same-origin',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            email,
+            data
+        })
+    });
 
 export const fetchPeople = () =>
     fetch(urls.base + urls.api.fetchPeople, {
@@ -42,10 +50,7 @@ export const fetchPeople = () =>
         credentials: 'include'
     })
         .then((response) => response.json())
-        .then((json) => json.people)
-        .catch((error) => {
-            console.error(error);
-        });
+        .then((json) => json.people);
 
 
 export const fetchEmails = () =>
@@ -55,10 +60,7 @@ export const fetchEmails = () =>
         credentials: 'include'
     })
         .then((response) => response.json())
-        .then((json) => json.emails)
-        .catch((error) => {
-            console.error(error);
-        });
+        .then((json) => json.emails);
 
 export const fetchPerson = (email) =>
     fetch(urls.base + urls.api.fetchPerson, {
@@ -73,7 +75,4 @@ export const fetchPerson = (email) =>
         })
     })
         .then((response) => response.json())
-        .then((json) => json.person)
-        .catch((error) => {
-            console.error(error);
-        });
+        .then((json) => json.person);

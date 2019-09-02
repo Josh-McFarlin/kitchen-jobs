@@ -13,6 +13,7 @@ module.exports = {
     api: {
         createPerson: '/api/createPerson',
         deletePerson: '/api/deletePerson',
+        editPerson: '/api/editPerson',
         fetchPeople: '/api/fetchPeople',
         fetchEmails: '/api/fetchEmails',
         fetchPerson: '/api/fetchPerson',

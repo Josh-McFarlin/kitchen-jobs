@@ -67,6 +67,38 @@ const editJob = async (key, { date, completedAt, ...rest }) => {
         data.completedAt = firebase.firestore.Timestamp.fromMillis(completedAt);
     }
 
+    console.log('skipped', rest.skipped);
+    if (rest.skipped) {
+        rest.skipped.forEach(async (email) => {
+            const increment = firebase.firestore.FieldValue.increment(1);
+
+            const personRef =
+                firebase.firestore()
+                    .collection('people')
+                    .doc(email);
+
+            await personRef.update({
+                jobsSkipped: increment
+            });
+        });
+    }
+
+    console.log('stolen', rest.stole);
+    if (rest.stole) {
+        rest.stole.forEach(async (email) => {
+            const increment = firebase.firestore.FieldValue.increment(1);
+
+            const personRef =
+                firebase.firestore()
+                    .collection('people')
+                    .doc(email);
+
+            await personRef.update({
+                jobsStolen: increment
+            });
+        });
+    }
+
     await firebase.firestore()
         .collection('jobs')
         .doc(key)

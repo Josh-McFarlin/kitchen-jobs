@@ -2,11 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'react-jss';
 import { Row, Col, Button } from 'shards-react';
-import _ from 'lodash';
 
 import KitchenJob from '../frontend/components/KitchenJob';
 import JobCreator from '../frontend/components/JobCreator';
-import JobSwitcher from '../frontend/components/JobSwitcher';
 import { fetchJobs, fetchEmails } from '../frontend/firebase/actions';
 
 
@@ -46,8 +44,7 @@ class IndexPage extends React.PureComponent {
         super(props);
 
         this.state = {
-            showCreator: false,
-            showSwitcher: false
+            showCreator: false
         };
     }
 
@@ -57,15 +54,9 @@ class IndexPage extends React.PureComponent {
         }));
     };
 
-    toggleSwitcher = () => {
-        this.setState((prevState) => ({
-            showSwitcher: !prevState.showSwitcher
-        }));
-    };
-
     render() {
         const { classes, currentUser, jobs, emailsToNames } = this.props;
-        const { showCreator, showSwitcher } = this.state;
+        const { showCreator } = this.state;
 
         return (
             <React.Fragment>
@@ -86,17 +77,12 @@ class IndexPage extends React.PureComponent {
                         job={job}
                         currentUser={currentUser}
                         emailsToNames={emailsToNames}
-                        toggleSwitcher={this.toggleSwitcher}
                     />
                 ))}
                 <JobCreator
                     modalOpen={showCreator}
                     closeModal={this.toggleCreator}
                     emailsToNames={emailsToNames}
-                />
-                <JobSwitcher
-                    modalOpen={showSwitcher}
-                    closeModal={this.toggleSwitcher}
                 />
             </React.Fragment>
         );

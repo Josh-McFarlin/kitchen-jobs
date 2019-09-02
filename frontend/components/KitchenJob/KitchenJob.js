@@ -9,6 +9,7 @@ import { Edit as EditIcon, Delete as DeleteIcon, CheckBox, CheckBoxOutlineBlank 
 import { deleteJob } from '../../firebase/actions';
 import JobCreator from '../JobCreator';
 import JobFinalizer from './JobFinalizer';
+import JobSwitcher from './JobSwitcher';
 
 
 const styles = (theme) => ({
@@ -39,7 +40,8 @@ class KitchenJob extends React.PureComponent {
         this.state = {
             showDelete: false,
             showEditor: false,
-            showFinalizer: false
+            showFinalizer: false,
+            showSwitcher: false
         };
     }
 
@@ -68,11 +70,17 @@ class KitchenJob extends React.PureComponent {
         }));
     };
 
+    toggleSwitcher = () => {
+        this.setState((prevState) => ({
+            showSwitcher: !prevState.showSwitcher
+        }));
+    };
+
     preventRerender = () => {};
 
     render() {
-        const { classes, job, currentUser, emailsToNames, toggleSwitcher } = this.props;
-        const { showDelete, showEditor, showFinalizer } = this.state;
+        const { classes, job, currentUser, emailsToNames } = this.props;
+        const { showDelete, showEditor, showFinalizer, showSwitcher } = this.state;
 
         return (
             <React.Fragment>
@@ -148,7 +156,7 @@ class KitchenJob extends React.PureComponent {
                         <ListGroupItem
                             key={email}
                             className={email === currentUser.email ? classes.ownJob : ''}
-                            onClick={email === currentUser.email ? toggleSwitcher : this.preventRerender}
+                            onClick={email === currentUser.email ? this.toggleSwitcher : this.preventRerender}
                         >
                             {_.get(emailsToNames, email, email)}
                         </ListGroupItem>
@@ -163,6 +171,13 @@ class KitchenJob extends React.PureComponent {
                 <JobFinalizer
                     modalOpen={showFinalizer}
                     closeModal={this.toggleFinalizer}
+                    emailsToNames={emailsToNames}
+                    job={job}
+                />
+                <JobSwitcher
+                    modalOpen={showSwitcher}
+                    closeModal={this.toggleSwitcher}
+                    emailsToNames={emailsToNames}
                     job={job}
                 />
             </React.Fragment>
@@ -174,8 +189,7 @@ KitchenJob.propTypes = {
     classes: PropTypes.object.isRequired,
     job: PropTypes.object.isRequired,
     currentUser: PropTypes.object.isRequired,
-    emailsToNames: PropTypes.object.isRequired,
-    toggleSwitcher: PropTypes.func.isRequired
+    emailsToNames: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(KitchenJob);
