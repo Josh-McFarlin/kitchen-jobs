@@ -26,6 +26,10 @@ const styles = (theme) => ({
     },
     endIcon: {
         float: 'right',
+        margin: `0 ${theme.spacing.unit}px`
+    },
+    endButton: {
+        float: 'right',
         cursor: 'pointer',
         margin: `0 ${theme.spacing.unit}px`
     },
@@ -148,26 +152,26 @@ class KitchenJob extends React.PureComponent {
                                 </b>
                             </div>
                             <div className={classes.headerImages}>
-                                {job.completed ? (
+                                {(job.completed) ? (
                                     <CheckBox
-                                        className={classes.endIcon}
+                                        className={currentUser.isAdmin ? classes.endButton : classes.endIcon}
                                         onClick={currentUser.isAdmin ? this.toggleFinalizer : this.preventRerender}
                                     />
                                 ) : (
                                     <CheckBoxOutlineBlank
-                                        className={classes.endIcon}
+                                        className={currentUser.isAdmin ? classes.endButton : classes.endIcon}
                                         onClick={currentUser.isAdmin ? this.toggleFinalizer : this.preventRerender}
                                     />
                                 )}
-                                {currentUser.isAdmin && (
+                                {(currentUser.isAdmin) && (
                                     <EditIcon
-                                        className={classes.endIcon}
+                                        className={classes.endButton}
                                         onClick={this.toggleEditor}
                                     />
                                 )}
-                                {currentUser.isAdmin && (
+                                {(currentUser.isAdmin) && (
                                     <DeleteIcon
-                                        className={classes.endIcon}
+                                        className={classes.endButton}
                                         onClick={this.toggleDelete}
                                     />
                                 )}

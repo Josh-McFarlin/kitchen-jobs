@@ -68,17 +68,19 @@ class IndexPage extends React.PureComponent {
 
         return (
             <React.Fragment>
-                <Row>
-                    <Col>
-                        <Button
-                            className={classes.createButton}
-                            theme='success'
-                            onClick={this.toggleCreator}
-                        >
-                            Create Job
-                        </Button>
-                    </Col>
-                </Row>
+                {(currentUser.isAdmin) && (
+                    <Row>
+                        <Col>
+                            <Button
+                                className={classes.createButton}
+                                theme='success'
+                                onClick={this.toggleCreator}
+                            >
+                                Create Job
+                            </Button>
+                        </Col>
+                    </Row>
+                )}
                 {jobs.map((job) => (
                     <KitchenJob
                         key={job.title + job.date._seconds}

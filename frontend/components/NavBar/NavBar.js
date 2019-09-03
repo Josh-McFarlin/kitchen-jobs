@@ -50,25 +50,23 @@ class NavBar extends React.PureComponent {
 
                 <Collapse open={drawerOpen} navbar>
                     <Nav navbar>
+                        <NavItem className={classes.navItem}>
+                            <NavLink
+                                active={router.asPath === urls.log}
+                                href={urls.log}
+                            >
+                                Log
+                            </NavLink>
+                        </NavItem>
                         {_.get(currentUser, 'isAdmin', false) && (
-                            <React.Fragment>
-                                <NavItem className={classes.navItem}>
-                                    <NavLink
-                                        active={router.asPath === urls.log}
-                                        href={urls.log}
-                                    >
-                                        Log
-                                    </NavLink>
-                                </NavItem>
-                                <NavItem className={classes.navItem}>
-                                    <NavLink
-                                        active={router.asPath === urls.manage}
-                                        href={urls.manage}
-                                    >
-                                        Manage
-                                    </NavLink>
-                                </NavItem>
-                            </React.Fragment>
+                            <NavItem className={classes.navItem}>
+                                <NavLink
+                                    active={router.asPath === urls.manage}
+                                    href={urls.manage}
+                                >
+                                    Manage
+                                </NavLink>
+                            </NavItem>
                         )}
                     </Nav>
                     <Nav navbar className='ml-auto'>
