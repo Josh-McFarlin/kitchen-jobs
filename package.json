@@ -47,8 +47,8 @@
     "universal-cookie": "^3.1.0"
   },
   "scripts": {
-    "firebase-secret": "now secrets add kitchencert \"$(<serviceAccountKey.json)\"",
-    "sendgrid-secret": "now secrets add sendgridkey \"$(<sendgridkey.txt)\"",
+    "firebase-secret": "now secrets add kitchencert \"$(<serviceAccountKey.json)\"; firebase functions:config:set kitchen.cert=\"$(<serviceAccountKey.json)\"",
+    "sendgrid-secret": "now secrets add sendgridkey \"$(<sendgridkey.txt)\"; firebase functions:config:set kitchen.sendgrid=\"$(<sendgridkey.txt)\"",
     "dev": "next",
     "build": "next build",
     "now-build": "next build",

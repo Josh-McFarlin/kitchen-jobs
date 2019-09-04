@@ -6,19 +6,21 @@ const prod = process.env.NODE_ENV === 'production';
 let firebaseCert;
 
 try {
-    firebaseCert = require('../../serviceAccountKey.json');
+    firebaseCert = JSON.parse(process.env.kitchencert);
 
     if (prod) {
-        console.log('Using Service Key from file!');
+        console.log('Using Service Key from env!');
     }
 } catch (e) {
-    console.error('Service Key file not found!');
+    if (prod) {
+        console.error('Service Key env not found!');
+    }
 
     try {
-        firebaseCert = JSON.parse(process.env.kitchencert);
+        firebaseCert = require('../../serviceAccountKey.json');
 
         if (prod) {
-            console.log('Using Service Key from env!');
+            console.log('Using Service Key from file!');
         }
     } catch (error) {
         console.error('Service Key env not found! No Service Key to use!');

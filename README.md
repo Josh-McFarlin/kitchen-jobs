@@ -18,9 +18,7 @@ A tool to manage communal kitchen cleaning
 * **Shards React**: Expanded Bootstrap components and React implementation
 * **react-jss**: For CSS-in-JS
 
----
-
-### Screenshots and Functionality
+## Screenshots and Functionality
 ![Home](./screenshots/home.png)
 * The home page lists all upcoming kitchen jobs.
 * Managers are able to create, edit, finalize, and delete jobs.
@@ -55,14 +53,12 @@ Manage Page (not shown):
     * Can promote regular users to managers.
     * Can transfer complete app ownership to another manager.
 
----
-
-### Planned Future Functionality
+## Planned Future Functionality
 - [ ] Sending users an email to remind them of a job on the day its due
 - [ ] Sending managers an email if the job has not been completed by a certain time
 - [ ] Allow users to make requests for the kitchen managers to buy missing utensils or other goods
 
-### How to Use This Tool
+## How to Use This Tool
 1. Clone this repo
 2. Create a Firebase account, and create a new project.
 3. In the Firebase project, create a new web app. Then go to the app settings, open Service Accounts, and generate a new private key. Save this file to the root directory of this project.
