@@ -184,8 +184,8 @@ class ManagePage extends React.PureComponent {
                                         <React.Fragment>
                                             <TableCell align='center'>
                                                 <Button
-                                                    theme='danger'
-                                                    disabled={item.isOwner}
+                                                    theme='info'
+                                                    disabled={item.isOwner || !item.isAdmin}
                                                     onClick={() => this.startOwner(item.email)}
                                                 >
                                                     Make Owner
@@ -195,7 +195,6 @@ class ManagePage extends React.PureComponent {
                                                 <TableCell align='center'>
                                                     <Button
                                                         theme='danger'
-                                                        disabled={item.isAdmin && currentUser.email !== item.email}
                                                         onClick={() => this.removeAdmin(item.email)}
                                                     >
                                                         Remove Manager
@@ -205,7 +204,6 @@ class ManagePage extends React.PureComponent {
                                                 <TableCell align='center'>
                                                     <Button
                                                         theme='info'
-                                                        disabled={item.isAdmin && currentUser.email !== item.email}
                                                         onClick={() => this.makeAdmin(item.email)}
                                                     >
                                                         Make Manager

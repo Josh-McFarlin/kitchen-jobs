@@ -1,4 +1,6 @@
 {
+  "version": 2,
+  "alias": "meal.mcfarl.in",
   "env": {
     "kitchencert": "@kitchencert",
     "sendgridkey": "@sendgridkey"
